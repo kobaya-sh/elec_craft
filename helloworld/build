@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#export PATH=$PATH:~/avrdude-6.3/libftdi/bin
+mmcu=atmega8
+abbrev=atmega8
+f_cpu=1000000
+writer=usbasp
+#writer=ft232r
+gcc=/home/osamu/avr-gcc/bin/avr-gcc
+objcopy=/home/osamu/avr-gcc/bin/avr-objcopy
+#avrdude=/home/osamu/avrdude-6.3/bin/avrdude
+avrdude=avrdude
+
+base=${1/.c/}
+${gcc} -O2 -mmcu=${mmcu} -DF_CPU=${f_cpu} $1 -o ${base} \
+&& ${objcopy} -j .text -j .data -O ihex ${base} ${base}.hex \
+&& ${avrdude} -c ${writer} -p ${abbrev} -U flash:w:${base}.hex 
